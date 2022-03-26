@@ -78,9 +78,8 @@ func process() {
 			open = true
 		}
 
+		mailer := gomail.NewMessage()
 		for _, r := range data {
-			mailer := gomail.NewMessage()
-
 			var status string
 			var msg_error string = ""
 
@@ -106,55 +105,3 @@ func process() {
 		time.Sleep(2 * time.Second)
 	}
 }
-
-/*
-func main2() {
-	InitConfig()
-	InitMailer()
-	InitDatabase()
-
-	defer func() {
-		_db, _ := db.DB()
-		_db.Close()
-		log.Println("Close database connection")
-	}()
-
-	mailer = gomail.NewMessage()
-	for {
-		data := GetMailRecord(10)
-		count := len(data)
-
-		if count != 0 {
-			var wg sync.WaitGroup
-			wg.Add(count)
-
-			for _, r := range data {
-				go func(r MailQueue) {
-					defer wg.Done()
-
-					var status string
-					var msg_error string = ""
-
-					err := SendMail(r)
-					if err != nil {
-						status = "error"
-						msg_error = err.Error()
-					} else {
-						status = "done"
-					}
-
-					UpdateMail(r, map[string]interface{}{
-						"status":        status,
-						"error_message": msg_error,
-					})
-				}(r)
-			}
-
-			wg.Wait()
-		} else {
-			log.Println("Sleep...")
-			time.Sleep(2 * time.Second)
-		}
-	}
-}
-*/
