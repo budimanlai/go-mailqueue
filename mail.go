@@ -63,7 +63,7 @@ func SendMail(mailer *gomail.Message, mail MailQueue) error {
 	}
 
 	msg_log += " --> " + status
-	log.Print(msg_log)
+	log.Println(msg_log)
 	mailer.Reset()
 
 	if status == "error" {

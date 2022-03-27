@@ -24,11 +24,11 @@ func main() {
 		log.Println("Close database connection")
 	}()
 
-	var duration time.Duration = time.Duration(ping_duration)
+	// var duration time.Duration = time.Duration(ping_duration)
 	open = false
 	idle = time.Duration(idle_duration)
 
-	check_smtp := time.After(duration * time.Second)
+	// check_smtp := time.After(duration * time.Second)
 	check_idle = time.After(idle * time.Second)
 
 	err := CheckDial()
@@ -42,15 +42,15 @@ func main() {
 
 	for {
 		select {
-		case <-check_smtp:
-			err := CheckDial()
-			if err != nil {
-				log.Println("Failed connect to SMTP server")
-				open = false
-			} else {
-				open = true
-			}
-			check_smtp = time.After(duration * time.Second)
+		// case <-check_smtp:
+		// 	err := CheckDial()
+		// 	if err != nil {
+		// 		log.Println("Failed connect to SMTP server")
+		// 		open = false
+		// 	} else {
+		// 		open = true
+		// 	}
+		// 	check_smtp = time.After(duration * time.Second)
 		case <-check_idle:
 			if open {
 				dCloser.Close()
@@ -76,11 +76,13 @@ func process() {
 				return
 			}
 			open = true
+			log.Println("SMTP connected")
 		}
 
 		mailer := gomail.NewMessage()
 		for _, r := range data {
-			var status string
+
+			var status string = "done"
 			var msg_error string = ""
 
 			err := SendMail(mailer, r)
@@ -96,6 +98,7 @@ func process() {
 			UpdateMail(r, map[string]interface{}{
 				"status":        status,
 				"error_message": msg_error,
+				"sended_at":     time.Now(),
 			})
 		}
 
