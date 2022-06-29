@@ -1,11 +1,11 @@
-package main
+package app
 
 import (
 	"crypto/tls"
 	"errors"
-	"log"
 	"strconv"
 
+	service "github.com/budimanlai/go-cli-service"
 	"gopkg.in/gomail.v2"
 )
 
@@ -16,18 +16,18 @@ var (
 	idle_duration int
 )
 
-func InitMailer() {
+func InitMailer(ctx service.ServiceContext) {
 	dialer = gomail.NewDialer(
-		config.GetString("mail.hostname"),
-		config.GetInt("mail.port"),
-		config.GetString("mail.username"),
-		config.GetString("mail.password"),
+		ctx.CfgGet(`smtp.hostname`),
+		ctx.CfgGetInt("smtp.port"),
+		ctx.CfgGet("smtp.username"),
+		ctx.CfgGet("smtp.password"),
 	)
-	dialer.SSL = config.GetString("mail.encryption") == "ssl"
+	dialer.SSL = true
 	dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
-	ping_duration = config.GetInt("mail.ping")
-	idle_duration = config.GetInt("mail.idle")
+	ping_duration = ctx.CfgGetInt("smtp.ping")
+	idle_duration = ctx.CfgGetInt("smtp.idle")
 }
 
 func CheckDial() error {
@@ -57,13 +57,13 @@ func SendMail(mailer *gomail.Message, mail MailQueue) error {
 	if err != nil {
 		status = "error"
 		msg_error = err.Error()
-		log.Println(msg_error)
+		log(msg_error)
 	} else {
 		status = "done"
 	}
 
 	msg_log += " --> " + status
-	log.Println(msg_log)
+	log(msg_log)
 	mailer.Reset()
 
 	if status == "error" {
