@@ -24,20 +24,23 @@ idle=30
 
 **4. Build (for linux)**
 ```
+// create dist folder
+
+// build
 ./scripts/compile.sh
 ```
 
 **4. Run**
 ```
 // run service and show the output in terminal
-./mail-queue run
+./dist/mail-queue-{GIT_HEAD_CODE} run
 
 // run service in background
-./mail-queue start
+./dist/mail-queue-{GIT_HEAD_CODE} start
 
 // stop the service
-./mail-queue stop
+./dist/mail-queue-{GIT_HEAD_CODE} stop
 
 // help
-./mail-queue help
+./dist/mail-queue-{GIT_HEAD_CODE} help
 ```
