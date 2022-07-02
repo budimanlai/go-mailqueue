@@ -4,16 +4,18 @@ import (
 	"crypto/tls"
 	"errors"
 	"strconv"
+	"strings"
 
 	service "github.com/budimanlai/go-cli-service"
 	"gopkg.in/gomail.v2"
 )
 
 var (
-	dialer        *gomail.Dialer
-	dCloser       gomail.SendCloser
-	ping_duration int
-	idle_duration int
+	dialer          *gomail.Dialer
+	dCloser         gomail.SendCloser
+	ping_duration   int
+	idle_duration   int
+	SMTPIsConnected bool
 )
 
 func InitMailer(ctx service.ServiceContext) {
@@ -23,7 +25,8 @@ func InitMailer(ctx service.ServiceContext) {
 		ctx.CfgGet("smtp.username"),
 		ctx.CfgGet("smtp.password"),
 	)
-	dialer.SSL = true
+	tlsBool := ctx.CfgGetBool(`smtp.tls`)
+	dialer.SSL = tlsBool
 	dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
 	ping_duration = ctx.CfgGetInt("smtp.ping")
@@ -34,9 +37,11 @@ func CheckDial() error {
 	var err error
 	dCloser, err = dialer.Dial()
 	if err != nil {
-		return errors.New("Failed connect to SMTP server")
+		SMTPIsConnected = false
+		return errors.New("Failed connect to SMTP server. " + err.Error())
 	}
 
+	SMTPIsConnected = true
 	return nil
 }
 
@@ -65,6 +70,11 @@ func SendMail(mailer *gomail.Message, mail MailQueue) error {
 	msg_log += " --> " + status
 	log(msg_log)
 	mailer.Reset()
+
+	if strings.Contains(msg_error, "could not send email") || strings.Contains(msg_error, "connection refused") {
+		SMTPIsConnected = false
+		log(`SMTP server down`)
+	}
 
 	if status == "error" {
 		return errors.New(msg_error)

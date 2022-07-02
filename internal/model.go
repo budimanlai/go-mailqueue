@@ -3,7 +3,7 @@ package app
 import "time"
 
 type MailQueue struct {
-	ID           uint
+	ID           int
 	ToMail       string
 	FromMail     string
 	Subject      string
