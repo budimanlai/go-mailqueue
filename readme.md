@@ -1,7 +1,7 @@
 # How To Use
 **1. Create config folder**
 
-**2. Create config file in config/main.conf**
+**2. Create main.conf file in config folder**
 ```
 [database]
 hostname=127.0.0.1
@@ -21,6 +21,7 @@ idle=30
 ```
 
 **3. Import mail_queue.sql to database**
+
 **4. Build (for linux)**
 ```
 ./scripts/compile.sh
