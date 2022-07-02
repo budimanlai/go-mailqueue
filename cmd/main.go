@@ -8,7 +8,7 @@ import (
 func main() {
 
 	services := service.NewService()
-	services.SetVersion("1.0.0")
+	services.SetVersion("1.0.1")
 	services.Start(app.StartFunc)
 	services.Stop(app.StopFunc)
 	services.Run()
