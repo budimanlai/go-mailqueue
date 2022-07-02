@@ -1,5 +1,6 @@
 # How To Use
 **1. Create config folder**
+
 **2. Create config file in config/main.conf**
 ```
 [database]
